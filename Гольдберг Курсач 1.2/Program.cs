@@ -173,12 +173,38 @@ namespace Гольдберг_Курсач_1._2
             //формирование особи критического пути
             int[,] matrix = new int[m, n];
             List<int[]> Generation1 = new List<int[]>();
-            for (int i = 0; i < count_indiv; i++)
+
+
+            Console.WriteLine();
+            for (int i = 0; i < count_indiv; i += 2)
+            {
+                IndvidMatrixGen(matrix, tasksMas, m, n);
+                sortUbav(matrix);
+                int[] genom1 = CriticalCreating(matrix); //геном
+                Generation1.Add(genom1);
+                Console.WriteLine("sortUbav");
+                print1Mas(genom1, genom1.Length);
+            }
+            Console.WriteLine();
+            for (int i = 0; i < count_indiv; i += 3)
+            {
+                IndvidMatrixGen(matrix, tasksMas, m, n);
+                sortVoz(matrix);
+                int[] genom1 = CriticalCreating(matrix); //геном
+                Generation1.Add(genom1);
+                Console.WriteLine("sortVoz");
+                print1Mas(genom1, genom1.Length);
+            }
+            Console.WriteLine();
+            for (int i = 0; i < count_indiv; i += 4)
             {
                 IndvidMatrixGen(matrix, tasksMas, m, n);
                 int[] genom1 = CriticalCreating(matrix); //геном
                 Generation1.Add(genom1);
+                Console.WriteLine("rrand");
+                print1Mas(genom1, genom1.Length);
             }
+            Console.WriteLine();
             printListArray(Generation1);
         }
     }
