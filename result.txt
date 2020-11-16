@@ -1,0 +1,29 @@
+    static int[] result(int[,] matrix)
+        
+        {
+            int t = 0;
+            int[] res = new int[matrix.GetLength(1)];
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                res[i] = matrix[i, 0];
+                t++;
+            }
+            double n = (double)(matrix.GetLength(0)) / (matrix.GetLength(1));
+            n = Math.Ceiling(n);
+            int m = (int)n;
+            List <int> indexMas = new List <int>();
+            for (int i = 0; i< matrix.GetLength(1); i++)
+            {
+                indexMas.Add(i);
+            }
+            for (int i = 0; i < matrix.GetLength(0) - matrix.GetLength(1); i++)
+            {
+                int min = res.Min();
+                int index = Array.FindIndex(res, delegate (int p) { return p == min; });
+                indexMas.Add(index);
+                res[index] = res[index] + matrix[t, 0];
+                t++;
+            }
+
+            return res;
+        }
