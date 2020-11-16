@@ -46,7 +46,6 @@ namespace Гольдберг_Курсач_1._2
             {
                 res[i] = matrix[i, 0];
                 t++;
-
             }
             double n = (double)(matrix.GetLength(0)) / (matrix.GetLength(1));
             n = Math.Ceiling(n);
