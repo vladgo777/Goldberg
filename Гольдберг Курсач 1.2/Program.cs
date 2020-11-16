@@ -9,16 +9,41 @@ namespace Гольдберг_Курсач_1._2
     
     class Program
     {
-        public class Generation
+
+        static int[,] sortUbav(int[,] mat)
         {
 
-           
+            var arr = mat.Cast<int>().OrderByDescending(a => a).ToArray();
 
+            int c = 0;
+            for (int j = 0; j < mat.GetLength(0); j++)
+            {
+                for (int k = 0; k < mat.GetLength(1); k++)
+                {
+                    mat[j, k] = arr[c];
+                    c++;
+                }
+            }
+            return mat;
+        }
+        static int[,] sortVoz(int[,] mat)
+        {
+
+            var arr = mat.Cast<int>().OrderBy(a => a).ToArray();
+
+            int c = 0;
+            for (int j = 0; j < mat.GetLength(0); j++)
+            {
+                for (int k = 0; k < mat.GetLength(1); k++)
+                {
+                    mat[j, k] = arr[c];
+                    c++;
+                }
+            }
+            return mat;
         }
         static void print2Mas(int[,] matrix, int n, int m)//вывод двумерной матрицы
         {
-
-            Console.WriteLine("");
             for (int i = 0; i < m; i++)
             {
                 for (int j = 0; j < n; j++)
@@ -30,14 +55,37 @@ namespace Гольдберг_Курсач_1._2
         }
         static void print1Mas(int[] matrix, int n)
         {
-            Console.WriteLine("");
             for (int i = 0; i < n; i++)
             {
                 Console.Write(matrix[i] + " ");
             }
         }
 
-        static int [] genomCreating(int[,] matrix)
+        static void printListArray(List<int[]> Generation1 )
+        {
+            Console.WriteLine("");
+            for (int i = 0; i < Generation1.Count; i++)
+            {
+                Console.Write("(");
+                Console.Write(string.Join(" ", Generation1[i]));
+                Console.WriteLine(")");
+            }
+        }
+
+        static int [,] IndvidMatrixGen(int[,] matrix, int[] tasksMas, int m , int n)
+        {
+            for (int i = 0; i < m; i++)
+            {
+                int nn = tasksMas[i];
+                for (int j = 0; j < n; j++)
+                {
+                    matrix[i, j] = nn;
+                }
+            }
+            return matrix;
+        }
+
+        static int [] CriticalCreating(int[,] matrix)
         
         {
             int t = 0;
@@ -60,7 +108,7 @@ namespace Гольдберг_Курсач_1._2
                 int min = res.Min();
                 int index = Array.FindIndex(res, delegate (int p) { return p == min; });
                 indexMas.Add(index);//массив позиций в матрице
-                res[index] = res[index] + matrix[t, 0];//Tmax
+                res[index] = res[index] + matrix[t, 0];//Tmax = return res;
                 t++;
             }
 
@@ -77,13 +125,15 @@ namespace Гольдберг_Курсач_1._2
             int[] individ = new int[matrix.GetLength(0)];
 
             int position = 0;
-            for(int i = 0; i < individ.Length; i++)
+            int num = 0; var rnd = new Random();
+            for (int i = 0; i < individ.Length; i++)
             {
                 position = indexMas[i];
-                individ[i] = line256[position] / 2;
+                //individ[i] = line256[position] / 2;
+                num = rnd.Next(line256[position] - step, line256[position]);
+                individ[i] = num;                
             }
-
-            return res;
+            return individ;
         }
 
         
@@ -97,6 +147,8 @@ namespace Гольдберг_Курсач_1._2
             Console.WriteLine("Введите диапозон загрузок T1 и T2");
             int t1 = int.Parse(Console.ReadLine());
             int t2 = int.Parse(Console.ReadLine());
+            Console.WriteLine("Сколько особей в популяции?");
+            int count_indiv = Convert.ToInt32(Console.ReadLine());
             //Console.WriteLine("Вероятность кроссовера (%)");//maxc
             //int P_cross = Convert.ToInt32(Console.ReadLine());
             //Console.WriteLine("Вероятность мутации (%)");
@@ -104,8 +156,6 @@ namespace Гольдберг_Курсач_1._2
             //Console.WriteLine("Число поколений с неизменным лучшим решением? (%)");
             //int best = Convert.ToInt32(Console.ReadLine());
             //Console.WriteLine();
-
-
 
             //массив заданий
             int[] tasksMas = new int[m];
@@ -116,39 +166,20 @@ namespace Гольдберг_Курсач_1._2
                 tasksMas[i] = nn;
             }
 
-
-
-            //формирование особи критического пути
-
-            int[,] matrix = new int [m,n];
-            for (int i = 0; i<m; i++)
-            {
-                int nn = tasksMas[i];
-                for(int j = 0; j < n; j++)
-                {
-                    matrix[i, j] = nn;
-                }
-            }
-
-
-
-
-            /////////////////////
             Console.WriteLine("Матрица загрузок");
-            print1Mas(tasksMas, n);
-            Console.WriteLine();
-            print2Mas(matrix, n, m);
+            print1Mas(tasksMas, m);
 
-
-
-            int[] matrix1 = genomCreating(matrix); //массив загрузки
-            Console.WriteLine();
-            Console.WriteLine("Матрица загрузок случайная: " + matrix1.Max());
-
-            ////////////////////
-
-
-
+            //формирование поколения критического пути
+            //формирование особи критического пути
+            int[,] matrix = new int[m, n];
+            List<int[]> Generation1 = new List<int[]>();
+            for (int i = 0; i < count_indiv; i++)
+            {
+                IndvidMatrixGen(matrix, tasksMas, m, n);
+                int[] genom1 = CriticalCreating(matrix); //геном
+                Generation1.Add(genom1);
+            }
+            printListArray(Generation1);
         }
     }
 }
