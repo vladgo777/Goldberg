@@ -37,7 +37,7 @@ namespace Гольдберг_Курсач_1._2
             }
         }
 
-        static int[] result(int[,] matrix)
+        static int [] genomCreating(int[,] matrix)
         
         {
             int t = 0;
@@ -59,9 +59,28 @@ namespace Гольдберг_Курсач_1._2
             {
                 int min = res.Min();
                 int index = Array.FindIndex(res, delegate (int p) { return p == min; });
-                indexMas.Add(index);
-                res[index] = res[index] + matrix[t, 0];
+                indexMas.Add(index);//массив позиций в матрице
+                res[index] = res[index] + matrix[t, 0];//Tmax
                 t++;
+            }
+
+            //перенос значений в геном
+            int[] line256 = new int[matrix.GetLength(1)];
+            int step = 256 / matrix.GetLength(1);
+            int point = 0;
+            for (int i = 0; i< line256.Length; i++)
+            {
+                point = point + step;
+                line256[i] = point;
+            }
+
+            int[] individ = new int[matrix.GetLength(0)];
+
+            int position = 0;
+            for(int i = 0; i < individ.Length; i++)
+            {
+                position = indexMas[i];
+                individ[i] = line256[position] / 2;
             }
 
             return res;
@@ -111,7 +130,6 @@ namespace Гольдберг_Курсач_1._2
                 }
             }
 
-            int[] line256 = new int[n];
 
 
 
@@ -123,7 +141,7 @@ namespace Гольдберг_Курсач_1._2
 
 
 
-            int[] matrix1 = result(matrix); //массив загрузки
+            int[] matrix1 = genomCreating(matrix); //массив загрузки
             Console.WriteLine();
             Console.WriteLine("Матрица загрузок случайная: " + matrix1.Max());
 
