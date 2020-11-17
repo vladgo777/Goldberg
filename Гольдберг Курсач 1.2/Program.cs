@@ -136,7 +136,32 @@ namespace Гольдберг_Курсач_1._2
             return individ;
         }
 
-        
+        static List<int[]> GenerationCritical(List<int[]> Generation1,int count_indiv,int[,] matrix,int m,int n, int[] tasksMas) 
+        {
+            for (int i = 0; i < count_indiv; i++)
+            {
+                IndvidMatrixGen(matrix, tasksMas, m, n);
+                int[] genom1 = CriticalCreating(matrix); //геном
+                Generation1.Add(genom1);
+            }
+            Console.WriteLine();
+            for (int i = 1; i < count_indiv; i += 2)
+            {
+                IndvidMatrixGen(matrix, tasksMas, m, n);
+                sortUbav(matrix);
+                int[] genom1 = CriticalCreating(matrix); //геном
+                Generation1[i] = genom1;
+            }
+            Console.WriteLine();
+            for (int i = 1; i < count_indiv; i += 3)
+            {
+                IndvidMatrixGen(matrix, tasksMas, m, n);
+                sortVoz(matrix);
+                int[] genom1 = CriticalCreating(matrix); //геном
+                Generation1[i] = genom1;
+            }
+            return Generation1;
+        }
 
         static void Main(string[] args)
         {
@@ -173,37 +198,8 @@ namespace Гольдберг_Курсач_1._2
             //формирование особи критического пути
             int[,] matrix = new int[m, n];
             List<int[]> Generation1 = new List<int[]>();
-
-
-            Console.WriteLine();
-            for (int i = 0; i < count_indiv; i += 2)
-            {
-                IndvidMatrixGen(matrix, tasksMas, m, n);
-                sortUbav(matrix);
-                int[] genom1 = CriticalCreating(matrix); //геном
-                Generation1.Add(genom1);
-                Console.WriteLine("sortUbav");
-                print1Mas(genom1, genom1.Length);
-            }
-            Console.WriteLine();
-            for (int i = 0; i < count_indiv; i += 3)
-            {
-                IndvidMatrixGen(matrix, tasksMas, m, n);
-                sortVoz(matrix);
-                int[] genom1 = CriticalCreating(matrix); //геном
-                Generation1.Add(genom1);
-                Console.WriteLine("sortVoz");
-                print1Mas(genom1, genom1.Length);
-            }
-            Console.WriteLine();
-            for (int i = 0; i < count_indiv; i += 4)
-            {
-                IndvidMatrixGen(matrix, tasksMas, m, n);
-                int[] genom1 = CriticalCreating(matrix); //геном
-                Generation1.Add(genom1);
-                Console.WriteLine("rrand");
-                print1Mas(genom1, genom1.Length);
-            }
+            Generation1 = GenerationCritical(Generation1, count_indiv, matrix, m,n, tasksMas);
+           
             Console.WriteLine();
             printListArray(Generation1);
         }
