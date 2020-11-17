@@ -53,9 +53,9 @@ namespace Гольдберг_Курсач_1._2
                 Console.WriteLine("");
             }
         }
-        static void print1Mas(int[] matrix, int n)
+        static void print1Mas(int[] matrix, int m)
         {
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < m; i++)
             {
                 Console.Write(matrix[i] + " ");
             }
@@ -63,9 +63,9 @@ namespace Гольдберг_Курсач_1._2
 
         static void printListArray(List<int[]> Generation1 )
         {
-            Console.WriteLine("");
             for (int i = 0; i < Generation1.Count; i++)
             {
+                Console.Write((i+1) + ".");
                 Console.Write("(");
                 Console.Write(string.Join(" ", Generation1[i]));
                 Console.WriteLine(")");
@@ -85,7 +85,7 @@ namespace Гольдберг_Курсач_1._2
             return matrix;
         }
 
-        static int [] CriticalCreating(int[,] matrix)
+        static int [] GenomCritical(int[,] matrix)
         
         {
             int t = 0;
@@ -125,7 +125,8 @@ namespace Гольдберг_Курсач_1._2
             int[] individ = new int[matrix.GetLength(0)];
 
             int position = 0;
-            int num = 0; var rnd = new Random();
+            int num = 0; 
+            var rnd = new Random();
             for (int i = 0; i < individ.Length; i++)
             {
                 position = indexMas[i];
@@ -136,31 +137,128 @@ namespace Гольдберг_Курсач_1._2
             return individ;
         }
 
-        static List<int[]> GenerationCritical(List<int[]> Generation1,int count_indiv,int[,] matrix,int m,int n, int[] tasksMas) 
+        static int[] GenomRandom(int[,] matrix)
         {
+            int[] individ = new int[matrix.GetLength(0)];
+            var rnd = new Random();
+            for (int i = 0; i < individ.Length; i++)
+            {
+                individ[i] = rnd.Next(0, 256);
+            }
+                return individ;
+        }
+
+        static int[] genom2;
+        static List<int[]> GenerationRandom( int count_indiv, int[,] matrix)
+        {
+            List<int[]> Generation2 = new List<int[]>();
             for (int i = 0; i < count_indiv; i++)
             {
-                IndvidMatrixGen(matrix, tasksMas, m, n);
-                int[] genom1 = CriticalCreating(matrix); //геном
+                genom2 = GenomRandom(matrix); //геном
+                Generation2.Add(genom2);
+            }
+            return Generation2;
+        }
+
+        static int[] genom1;
+        static List<int[]> GenerationCritical(int count_indiv,int[,] matrix) 
+        {
+            List<int[]> Generation1 = new List<int[]>();
+            for (int i = 0; i < count_indiv; i++)
+            {
+                 genom1 = GenomCritical(matrix); //геном
                 Generation1.Add(genom1);
             }
-            Console.WriteLine();
             for (int i = 1; i < count_indiv; i += 2)
             {
-                IndvidMatrixGen(matrix, tasksMas, m, n);
                 sortUbav(matrix);
-                int[] genom1 = CriticalCreating(matrix); //геном
+                 genom1 = GenomCritical(matrix); //геном
                 Generation1[i] = genom1;
             }
-            Console.WriteLine();
             for (int i = 1; i < count_indiv; i += 3)
             {
-                IndvidMatrixGen(matrix, tasksMas, m, n);
                 sortVoz(matrix);
-                int[] genom1 = CriticalCreating(matrix); //геном
+                 genom1 = GenomCritical(matrix); //геном
                 Generation1[i] = genom1;
             }
             return Generation1;
+        }
+
+        static void Crossover(int[] individCross1, int[] individCross2, int m, int P_cross, int position1, int position2, int P_mutat)
+        {
+            var rnd2 = new Random();
+            int n2 = rnd2.Next(0, 100);
+            if (n2 >= 0 && n2 <= P_cross)
+            {
+                var rnd1 = new Random();
+                int n1 = rnd1.Next(1, m - 1);
+                int[] part = new int[m - n1];
+                int j_part = 0;
+                //Console.WriteLine(); Console.WriteLine("n1 ");
+                //Console.WriteLine(n1 + " ");
+                for (int i = 0; i < m; i++)
+                {
+                    if ((i == n1) || (i > n1))
+                    {
+                        part[j_part] = individCross1[i];
+                        individCross1[i] = individCross2[i];
+                        j_part++;
+                    }
+                }
+                j_part = 0;
+                for (int i = 0; i < m; i++)
+                {
+                    if ((i == n1) || (i > n1))
+                    {
+                        individCross2[i] = part[j_part];
+                        j_part++;
+                    }
+                }
+                Console.WriteLine("         | Кроссовер между " + (position1 + 1) + " особью и " + (position2 + 1) + " особью ВЫПОЛНЯЕТСЯ|");
+                //Console.WriteLine(); Console.WriteLine("1^ ");
+                //print1Mas(individCross1, individCross1.Length);
+                //Console.WriteLine(); Console.WriteLine("2^ ");
+                //print1Mas(individCross2, individCross2.Length);
+
+
+                //мутация
+                Mutation(individCross1, individCross2, m, P_mutat);
+            }
+            else
+            {
+                Console.WriteLine("         | Кроссовер не выполняется |");
+            }
+        }
+        public static string IntToString(int value, char[] baseChars)
+        {
+            string result = string.Empty;
+            int targetBase = baseChars.Length;
+
+            do
+            {
+                result = baseChars[value % targetBase] + result;
+                value = value / targetBase;
+            }
+            while (value > 0);
+
+            return result;
+        }
+        static void Mutation(int[] individCross1, int[] individCross2, int m, int P_mutat)
+        {
+            var rnd2 = new Random();
+            int n2 = rnd2.Next(0, 100);
+            int[] individCross1_binary = new int[individCross1.Length];
+            int[] individCross2_binary = new int[individCross2.Length];
+            if (n2 >= 0 && n2 <= P_mutat)
+            { 
+                for (int i = 0; i < individCross1.Length; i++)
+                {
+                    string binary = IntToString(individCross1[i], new char[] { '0', '1' });
+                    individCross1_binary[i] = Convert.ToInt32(binary);
+                }
+                Console.WriteLine("Двоичное представление");
+                    print1Mas(individCross1_binary, individCross1_binary.Length);
+            }
         }
 
         static void Main(string[] args)
@@ -174,15 +272,15 @@ namespace Гольдберг_Курсач_1._2
             int t2 = int.Parse(Console.ReadLine());
             Console.WriteLine("Сколько особей в популяции?");
             int count_indiv = Convert.ToInt32(Console.ReadLine());
-            //Console.WriteLine("Вероятность кроссовера (%)");//maxc
-            //int P_cross = Convert.ToInt32(Console.ReadLine());
-            //Console.WriteLine("Вероятность мутации (%)");
-            //int P_mutat = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Вероятность кроссовера (%)");//maxc
+            int P_cross = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Вероятность мутации (%)");
+            int P_mutat = Convert.ToInt32(Console.ReadLine());
             //Console.WriteLine("Число поколений с неизменным лучшим решением? (%)");
             //int best = Convert.ToInt32(Console.ReadLine());
             //Console.WriteLine();
 
-            //массив заданий
+            //одномерный массив заданий
             int[] tasksMas = new int[m];
             var rnd = new Random();
             for (int i = 0; i < m; i++)
@@ -190,18 +288,57 @@ namespace Гольдберг_Курсач_1._2
                 int nn = rnd.Next(t1, t2);
                 tasksMas[i] = nn;
             }
-
             Console.WriteLine("Матрица загрузок");
             print1Mas(tasksMas, m);
 
-            //формирование поколения критического пути
-            //формирование особи критического пути
+            //формирование матрицы загрузок для особи
             int[,] matrix = new int[m, n];
+            IndvidMatrixGen(matrix, tasksMas, m, n);
+
+            //формирование поколения критического пути
             List<int[]> Generation1 = new List<int[]>();
-            Generation1 = GenerationCritical(Generation1, count_indiv, matrix, m,n, tasksMas);
-           
+            Generation1 = GenerationCritical(count_indiv, matrix);
+
+            //формирование поколения рандом
+            List<int[]> Generation2 = new List<int[]>();
+            Generation2 = GenerationRandom(count_indiv, matrix);
+
+            //основная часть Критического пути
             Console.WriteLine();
-            printListArray(Generation1);
+            int[] individCross1 = Generation1[0];
+            int position1 = 0;
+            var rnd1 = new Random();
+            int position2;
+            Console.WriteLine();
+            Console.WriteLine("Начальное поколение (Критического пути)");
+            printListArray(Generation1); 
+            for (int i = 0; i< count_indiv; i++)
+            {
+                position2 = rnd.Next(0, count_indiv - 1);
+                while (position2 == position1)
+                {
+                    position2 = rnd.Next(0, count_indiv-1);
+                }
+                int[] individCross2 = Generation1[position2];
+                Console.WriteLine(); Console.WriteLine("1^ ");
+                print1Mas(individCross1, individCross1.Length);
+                Console.WriteLine(); Console.WriteLine("2^ "); Console.WriteLine();
+                print1Mas(individCross2, individCross2.Length);
+                Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
+                
+                //кроссовер
+                Crossover(individCross1, individCross2, m, P_cross, position1, position2,  P_mutat);
+                Console.WriteLine(); Console.WriteLine("11^ ");
+                print1Mas(individCross1, individCross1.Length);
+                Console.WriteLine(); Console.WriteLine("22^ "); Console.WriteLine();
+                print1Mas(individCross2, individCross2.Length);
+
+                if (i != (count_indiv - 1))
+                {
+                    position1++;
+                    individCross1 = Generation1[position1];
+                }
+            }
         }
     }
 }
