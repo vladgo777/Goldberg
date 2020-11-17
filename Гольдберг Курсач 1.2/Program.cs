@@ -222,7 +222,7 @@ namespace Гольдберг_Курсач_1._2
 
 
                 //мутация
-                Mutation(individCross1, individCross2, m, P_mutat);
+                Mutation(individCross1, individCross2, m, P_mutat, position1, position2);
             }
             else
             {
@@ -243,21 +243,41 @@ namespace Гольдберг_Курсач_1._2
 
             return result;
         }
-        static void Mutation(int[] individCross1, int[] individCross2, int m, int P_mutat)
+        static void Mutation(int[] individCross1, int[] individCross2, int m, int P_mutat, int position1, int position2)
         {
-            var rnd2 = new Random();
-            int n2 = rnd2.Next(0, 100);
-            int[] individCross1_binary = new int[individCross1.Length];
-            int[] individCross2_binary = new int[individCross2.Length];
-            if (n2 >= 0 && n2 <= P_mutat)
-            { 
+            var rnd3 = new Random();
+            int n3 = rnd3.Next(0, 100);
+
+            //int[] individCross1_binary = new int[individCross1.Length];
+            //int[] individCross2_binary = new int[individCross2.Length];
+
+            List<string> individCross1_binary = new List<string>();
+            List<string> individCross2_binary = new List<string>();
+            if (n3 >= 0 && n3 <= P_mutat)
+            {
+                int[] binaryMas = new int[individCross1.Length];
                 for (int i = 0; i < individCross1.Length; i++)
                 {
-                    string binary = IntToString(individCross1[i], new char[] { '0', '1' });
-                    individCross1_binary[i] = Convert.ToInt32(binary);
+
+                    string binary = Convert.ToString(individCross1[i], 2);
+                    
+                    individCross1_binary.Add((binary));
                 }
-                Console.WriteLine("Двоичное представление");
-                    print1Mas(individCross1_binary, individCross1_binary.Length);
+
+                Console.WriteLine("             | Мутация между " + (position1 + 1) + " особью и " + (position2 + 1) + " особью ВЫПОЛНЯЕТСЯ|");
+                for (int i = 0; i < individCross1_binary.Count; i++)
+                {
+                    Console.Write((i + 1) + ".");
+                    Console.Write("(");
+                    Console.Write(string.Join(" ", individCross1_binary[i]));
+                    Console.WriteLine(")");
+                }
+                //Console.WriteLine("Двоичное представление");
+                //    print1Mas(individCross1_binary, individCross1_binary.Length);
+            }
+            else
+            {
+                Console.WriteLine("             | Мутация не выполняется |");
             }
         }
 
@@ -320,18 +340,19 @@ namespace Гольдберг_Курсач_1._2
                     position2 = rnd.Next(0, count_indiv-1);
                 }
                 int[] individCross2 = Generation1[position2];
-                Console.WriteLine(); Console.WriteLine("1^ ");
-                print1Mas(individCross1, individCross1.Length);
-                Console.WriteLine(); Console.WriteLine("2^ "); Console.WriteLine();
-                print1Mas(individCross2, individCross2.Length);
+                Console.WriteLine(); 
+                //Console.WriteLine("1^ ");
+                //print1Mas(individCross1, individCross1.Length);
+                //Console.WriteLine(); Console.WriteLine("2^ "); Console.WriteLine();
+                //print1Mas(individCross2, individCross2.Length);
                 Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
                 
                 //кроссовер
                 Crossover(individCross1, individCross2, m, P_cross, position1, position2,  P_mutat);
-                Console.WriteLine(); Console.WriteLine("11^ ");
-                print1Mas(individCross1, individCross1.Length);
-                Console.WriteLine(); Console.WriteLine("22^ "); Console.WriteLine();
-                print1Mas(individCross2, individCross2.Length);
+                //Console.WriteLine(); Console.WriteLine("11^ ");
+                //print1Mas(individCross1, individCross1.Length);
+                //Console.WriteLine(); Console.WriteLine("22^ "); Console.WriteLine();
+                //print1Mas(individCross2, individCross2.Length);
 
                 if (i != (count_indiv - 1))
                 {
