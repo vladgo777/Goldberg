@@ -334,6 +334,53 @@ namespace Гольдберг_Курсач_1._2
             }
         }
 
+        static int TmaxFunc(int[] individCross1Main, int n, int[] tasksMas)
+        {
+            int[] posMas = new int[n];
+            for (int q = 0; q < posMas.Length; q++)
+            {
+                posMas[q] = 0;
+            }
+            int[] line256Local = new int[line256.Length + 1];
+            line256Local[0] = 0;
+            int line256I = 0;
+            for (int qq = 1; qq < line256Local.Length; qq++)
+            {
+                line256Local[qq] = line256[line256I];
+                line256I++;
+            }
+           
+            for (int j = 0; j < individCross1Main.Length; j++)
+            {
+                for (int pos = 0; pos < line256Local.Length - 1; pos++)
+                {
+                    if (individCross1Main[j] >= line256Local[pos] && individCross1Main[j] <= line256Local[pos + 1])
+                    {
+                        posMas[pos] = posMas[pos] + tasksMas[j];
+                        break;
+                    }
+                }
+            }
+            int Tmax = posMas.Max();
+            return Tmax;
+            
+        }
+
+        static int [] BestIndivid(int[] individCross1, int[] individCross2, int n, int[] tasksMas)
+        {
+            int Tmax1 = TmaxFunc(individCross1, n, tasksMas);
+            int Tmax2 = TmaxFunc(individCross2, n, tasksMas);
+
+            if (Tmax1 <= Tmax2)
+            { 
+                return individCross1;
+            }
+            else
+            {
+                return individCross2;
+            }
+        }
+
         static void Main(string[] args)
         {
             Console.WriteLine("Введите количество заданий (m)");
@@ -365,10 +412,10 @@ namespace Гольдберг_Курсач_1._2
             print1Mas(tasksMas, m);
 
             //формирование матрицы загрузок для особи
-            //11111
-            //22222
-            // ...
-            //mmmmm
+                //11111
+                //22222
+                // ...
+                //mmmmm
             int[,] matrix = new int[m, n];
             IndvidMatrixGen(matrix, tasksMas, m, n);
 
@@ -404,47 +451,8 @@ namespace Гольдберг_Курсач_1._2
                 Crossover(individCross1Main, individCross2, m, P_cross, position1, position2,  P_mutat);
 
                 //определение лучшей особи
-                
+                BestIndivid(individCross1Main, individCross2, n, tasksMas);
 
-                int[] posMas = new int[n];
-                for (int q=0; q < posMas.Length; q++)
-                {
-                    posMas[q] = 0;
-                }
-                int[] line256Local = new int[line256.Length + 1];
-                line256Local[0] = 0;
-                int line256I = 0;
-                for (int qq = 1; qq < line256Local.Length; qq++)
-                {
-                    line256Local[qq] = line256[line256I];
-                    line256I++;
-                }
-                Console.WriteLine();
-                Console.WriteLine("line256Local");
-                print1Mas(line256Local, line256Local.Length);
-                for (int j = 0; j < individCross1Main.Length; j++)
-                {
-                    for (int pos = 0; pos< line256Local.Length - 1; pos++)
-                    {
-                        if (individCross1Main[j] >= line256Local[pos] && individCross1Main[j] <= line256Local[pos + 1])
-                        {
-                            //posMas[pos] = posMas[pos] + individCross1Main[j];
-                            posMas[pos] = posMas[pos] + tasksMas[j];
-                            break;
-                        }
-                    }
-                }
-                int Tmax = posMas.Max();
-                Console.WriteLine();
-                Console.WriteLine("individCross1Main");
-                print1Mas(individCross1Main, individCross1Main.Length);
-
-                Console.WriteLine();
-                Console.WriteLine("posMas");
-                print1Mas(posMas, posMas.Length);
-                Console.WriteLine();
-                Console.WriteLine("Tmax");
-                Console.WriteLine(Tmax);
                 //выбор следущей левой особи для сравнения
                 if (i != (count_indiv - 1))
                 {
