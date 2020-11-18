@@ -220,6 +220,7 @@ namespace Гольдберг_Курсач_1._2
                 //Console.WriteLine(); Console.WriteLine("2^ ");
                 //print1Mas(individCross2, individCross2.Length);
 
+               
 
                 //мутация
                 Mutation(individCross1, individCross2, m, P_mutat, position1, position2);
@@ -243,6 +244,43 @@ namespace Гольдберг_Курсач_1._2
 
             return result;
         }
+
+        static List<string> ChooseElement(List<string>  individCross1_binary, int position1)
+        {
+            int element = 0;
+            var rnd4 = new Random();
+            element = rnd4.Next(0, individCross1_binary.Count);
+
+            Console.WriteLine("             | Для мутации " + (position1 + 1) + " особи выбрано " + (element + 1) + " звено|");
+
+            string elemMas = individCross1_binary[element];
+            char[] charElemMas = elemMas.ToCharArray();
+            var rnd5 = new Random();
+            int n4 = rnd5.Next(0, charElemMas.Length);
+            int n5 = rnd5.Next(0, charElemMas.Length);
+            while (n5 == n4)
+            {
+                n5 = rnd5.Next(0, charElemMas.Length);
+            }
+            for (int i = 0; i < charElemMas.Length; i++)
+            {
+                if ((i == n4) || (i == n5))
+                {
+                    if (charElemMas[i] == '1')
+                    {
+                        charElemMas[i] = '0';
+                    }
+                    else
+                    {
+                        charElemMas[i] = '1';
+                    }
+                }
+            }
+            elemMas = new string(charElemMas);
+            individCross1_binary[element] = elemMas;
+            
+            return individCross1_binary;
+        }
         static void Mutation(int[] individCross1, int[] individCross2, int m, int P_mutat, int position1, int position2)
         {
             var rnd3 = new Random();
@@ -250,30 +288,29 @@ namespace Гольдберг_Курсач_1._2
 
             //int[] individCross1_binary = new int[individCross1.Length];
             //int[] individCross2_binary = new int[individCross2.Length];
-
             List<string> individCross1_binary = new List<string>();
             List<string> individCross2_binary = new List<string>();
             if (n3 >= 0 && n3 <= P_mutat)
             {
-                int[] binaryMas = new int[individCross1.Length];
+                //int[] binaryMas1 = new int[individCross1.Length];
                 for (int i = 0; i < individCross1.Length; i++)
                 {
 
                     string binary = Convert.ToString(individCross1[i], 2);
-                    
                     individCross1_binary.Add((binary));
                 }
-
-                Console.WriteLine("             | Мутация между " + (position1 + 1) + " особью и " + (position2 + 1) + " особью ВЫПОЛНЯЕТСЯ|");
-                for (int i = 0; i < individCross1_binary.Count; i++)
+                for (int i = 0; i < individCross2.Length; i++)
                 {
-                    Console.Write((i + 1) + ".");
-                    Console.Write("(");
-                    Console.Write(string.Join(" ", individCross1_binary[i]));
-                    Console.WriteLine(")");
+
+                    string binary2 = Convert.ToString(individCross2[i], 2);
+                    individCross2_binary.Add((binary2));
                 }
-                //Console.WriteLine("Двоичное представление");
-                //    print1Mas(individCross1_binary, individCross1_binary.Length);
+
+                Console.WriteLine("             | Мутация для " + (position1 + 1) + " особи и " + (position2 + 1) + " особи ВЫПОЛНЯЕТСЯ|");
+               
+                //мутация каждого ребенка
+                individCross1_binary = ChooseElement(individCross1_binary, position1);
+                individCross2_binary = ChooseElement(individCross2_binary, position2);
             }
             else
             {
@@ -341,19 +378,11 @@ namespace Гольдберг_Курсач_1._2
                 }
                 int[] individCross2 = Generation1[position2];
                 Console.WriteLine(); 
-                //Console.WriteLine("1^ ");
-                //print1Mas(individCross1, individCross1.Length);
-                //Console.WriteLine(); Console.WriteLine("2^ "); Console.WriteLine();
-                //print1Mas(individCross2, individCross2.Length);
                 Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
                 
                 //кроссовер
                 Crossover(individCross1, individCross2, m, P_cross, position1, position2,  P_mutat);
-                //Console.WriteLine(); Console.WriteLine("11^ ");
-                //print1Mas(individCross1, individCross1.Length);
-                //Console.WriteLine(); Console.WriteLine("22^ "); Console.WriteLine();
-                //print1Mas(individCross2, individCross2.Length);
-
+                
                 if (i != (count_indiv - 1))
                 {
                     position1++;
