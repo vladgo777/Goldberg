@@ -222,7 +222,6 @@ namespace Гольдберг_Курсач_1._2
 
                 //мутация
                 Mutation(individCross1, individCross2, m, P_mutat, position1, position2);
-
                 //определение лучшей особи
                 Console.WriteLine("                     | Сравнение потомков |");
                 int[] individCrossBestChild = new int[individCross1.Length];
@@ -279,14 +278,15 @@ namespace Гольдберг_Курсач_1._2
             char[] charElemMas = elemMas.ToCharArray();
             var rnd5 = new Random();
             int n4 = rnd5.Next(0, charElemMas.Length);
-            int n5 = rnd5.Next(0, charElemMas.Length);
-            while (n5 == n4)
-            {
-                n5 = rnd5.Next(0, charElemMas.Length);
-            }
+            //int n5 = rnd5.Next(0, charElemMas.Length);
+            //while (n5 == n4)
+            //{
+            //    n5 = rnd5.Next(0, charElemMas.Length);
+            //}
             for (int i = 0; i < charElemMas.Length; i++)
             {
-                if ((i == n4) || (i == n5))
+                //if ((i == n4) || (i == n5))
+                if ((i == n4) )
                 {
                     if (charElemMas[i] == '1')
                     {
@@ -298,9 +298,12 @@ namespace Гольдберг_Курсач_1._2
                     }
                 }
             }
+            
+        
             elemMas = new string(charElemMas);
             individCross1_binary[element] = elemMas;
-            
+
+
             return individCross1_binary;
         }
         static void Mutation(int[] individCross1, int[] individCross2, int m, int P_mutat, int position1, int position2)
@@ -347,6 +350,7 @@ namespace Гольдберг_Курсач_1._2
                     int binary2Int = Convert.ToInt32(binary2, 10);
                     individCross2[i] = binary2Int;
                 }
+
                 //Console.WriteLine();
                 //print1Mas(individCross1, individCross1.Length);
                 //Console.WriteLine();
