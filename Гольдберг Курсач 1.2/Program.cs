@@ -226,12 +226,12 @@ namespace Гольдберг_Курсач_1._2
                 //определение лучшей особи
                 Console.WriteLine("                     | Сравнение потомков |");
                 int[] individCrossBestChild = new int[individCross1.Length];
-                individCrossBestChild = BestIndivid(individCross1, individCross2, n, tasksMas, (position1 + 1), (position2 + 1));
+                individCrossBestChild = BestIndivid(individCross1, individCross2, n, tasksMas);
 
                 //замена главной особи с лучшим ребенком
                 Console.WriteLine("                     | Сравнение родителя и лучшего потомка |");
                 int[] individCrossBest = new int[individCross1.Length];
-                individCrossBest = BestIndivid(individCross1, individCrossBestChild, n, tasksMas, (position1 + 1), (position2 + 1));
+                individCrossBest = BestIndivid(individCross1, individCrossBestChild, n, tasksMas);
 
                 if (!individCrossBest.SequenceEqual(individCross1))
                 {
@@ -390,7 +390,7 @@ namespace Гольдберг_Курсач_1._2
             
         }
 
-        static int [] BestIndivid(int[] individCross1, int[] individCross2, int n, int[] tasksMas, int position1, int position2)
+        static int [] BestIndivid(int[] individCross1, int[] individCross2, int n, int[] tasksMas)
         {
             int Tmax1 = 0;
             int Tmax2 = 0;
@@ -441,11 +441,7 @@ namespace Гольдберг_Курсач_1._2
             Console.WriteLine("Матрица загрузок");
             print1Mas(tasksMas, m);
 
-            //формирование матрицы загрузок для особи
-                //11111
-                //22222
-                // ...
-                //mmmmm
+            //формирование матрицы загрузок для особи 
             int[,] matrix = new int[m, n];
             IndvidMatrixGen(matrix, tasksMas, m, n);
 
@@ -459,39 +455,88 @@ namespace Гольдберг_Курсач_1._2
 
             //основная часть Критического пути
             Console.WriteLine();
-            int[] individCross1Main = Generation1[0];
-            int position1 = 0;
-            var rnd1 = new Random();
-            int position2;
-            Console.WriteLine();
+            Console.WriteLine("-----------------------------------------");
             Console.WriteLine("Начальное поколение (Критического пути)");
-            printListArray(Generation1); 
-            for (int i = 0; i< count_indiv; i++)
+            printListArray(Generation1);
+
+            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine();
+            int bestCrit = 0;
+            int[] bestCritPrevious = Generation1[0];
+            int counterCrit = 0;
+            int bestNum = 0;
+            while (bestCrit != best)
             {
-                position2 = rnd.Next(0, count_indiv - 1);
-                while (position2 == position1)
+                int[] individCross1Main = Generation1[0];
+                int position1 = 0;
+                var rnd1 = new Random();
+                int position2;
+                for (int i = 0; i < count_indiv; i++)
                 {
-                    position2 = rnd.Next(0, count_indiv-1);
+                    position2 = rnd.Next(0, count_indiv - 1);
+                    while (position2 == position1)
+                    {
+                        position2 = rnd.Next(0, count_indiv - 1);
+                    }
+                    int[] individCross2 = Generation1[position2];
+                    Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
+
+                    //кроссовер
+                    Crossover(individCross1Main, individCross2, m, P_cross, position1, position2, P_mutat, n, tasksMas, Generation1);
+
+                    //---------------------------------------
+                    //выбор следущей левой особи для сравнения
+                    if (i != (count_indiv - 1))
+                    {
+                        position1++;
+                        individCross1Main = Generation1[position1];
+                    }
                 }
-                int[] individCross2 = Generation1[position2];
-                Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
+                //поиск лучшей особи в популяции
+                int[] bestGenom = Generation1[0];
 
-                //кроссовер
-                Crossover(individCross1Main, individCross2, m, P_cross, position1, position2,  P_mutat, n, tasksMas, Generation1);
-
-                
-
-                //---------------------------------------
-                //выбор следущей левой особи для сравнения
-                if (i != (count_indiv - 1))
+                Console.WriteLine();
+                Console.WriteLine("    Выбор лучшей особи в поколении");
+                for (int i = 1; i < Generation1.Count; i++)
                 {
-                    position1++;
-                    individCross1Main = Generation1[position1];
+                    int[] Genom2 = Generation1[i];
+                    bestGenom = BestIndivid(bestGenom, Genom2, n, tasksMas);
                 }
+
+                for (int i = 0; i < Generation1.Count; i++)
+                {
+                    if (bestGenom.SequenceEqual(Generation1[i]))
+                    {
+                        bestNum = i;
+                    }
+
+                }
+                Console.WriteLine("    " + bestNum + "я особь - Лучшая особь в популяции ");
+
+                //подсчет лучшей особи
+                if (bestGenom.SequenceEqual(bestCritPrevious))
+                {
+                    bestCrit++;
+                }
+                else
+                {
+                    bestCrit = 0;
+                }
+                bestCritPrevious = bestGenom;
+                counterCrit++;
+                Console.WriteLine();
+                Console.WriteLine("    -------------------------------------");
+                Console.WriteLine("    Конец " + counterCrit + "го жизненного цикла");
+                Console.WriteLine("    " + bestNum + "я особь - Лучшая особь в популяции ");
+                Console.WriteLine("    -------------------------------------");
             }
             Console.WriteLine();
+            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine( bestNum + "я особь - Лучшая особь"); 
+            Console.WriteLine("-----------------------------------------");
             Console.WriteLine("Финальное поколение (Критического пути)");
             printListArray(Generation1);
+            Console.WriteLine("-----------------------------------------");
         }
     }
 }
