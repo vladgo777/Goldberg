@@ -458,10 +458,10 @@ namespace Гольдберг_Курсач_1._2
             Generation2 = GenerationRandom(count_indiv, matrix);
 
             //основная часть Критического пути
-            Console.WriteLine();
-            Console.WriteLine("-----------------------------------------");
-            Console.WriteLine("Начальное поколение (Критического пути)");
-            printListArray(Generation1);
+            //Console.WriteLine();
+            //Console.WriteLine("-----------------------------------------");
+            //Console.WriteLine("Начальное поколение (Критического пути)");
+            //printListArray(Generation1);
 
             Console.WriteLine("-----------------------------------------");
             Console.WriteLine();
@@ -530,7 +530,7 @@ namespace Гольдберг_Курсач_1._2
                 counterCrit++;
                 Console.WriteLine();
                 Console.WriteLine("    -------------------------------------");
-                Console.WriteLine("    Конец " + counterCrit + "го жизненного цикла");
+                Console.WriteLine("    Конец " + (counterCrit+1) + "го жизненного цикла");
                 Console.WriteLine("    " + bestNum + "я особь - Лучшая особь в популяции ");
                 Console.WriteLine("    -------------------------------------");
             }
@@ -538,8 +538,109 @@ namespace Гольдберг_Курсач_1._2
             Console.WriteLine("-----------------------------------------");
             Console.WriteLine( bestNum + "я особь - Лучшая особь"); 
             Console.WriteLine("-----------------------------------------");
-            Console.WriteLine("Финальное поколение (Критического пути)");
-            printListArray(Generation1);
+            //Console.WriteLine("Финальное поколение (Критического пути)");
+            //printListArray(Generation1);
+            //Console.WriteLine("-----------------------------------------");
+
+
+
+            //основная часть Рандом
+            //Console.WriteLine();
+            //Console.WriteLine("-----------------------------------------");
+            //Console.WriteLine("Начальное поколение (Рандом)");
+            //printListArray(Generation2);
+
+            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine();
+            int bestRand = 0;
+            int[] bestRandPrevious = Generation2[0];
+            int counterRand = 0;
+            int bestNum2 = 0;
+            while (bestRand != best)
+            {
+                int[] individCross1Main = Generation2[0];
+                int position1 = 0;
+                var rnd1 = new Random();
+                int position2;
+                for (int i = 0; i < count_indiv; i++)
+                {
+                    position2 = rnd.Next(0, count_indiv - 1);
+                    while (position2 == position1)
+                    {
+                        position2 = rnd.Next(0, count_indiv - 1);
+                    }
+                    int[] individCross2 = Generation2[position2];
+                    Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
+
+                    //кроссовер
+                    Crossover(individCross1Main, individCross2, m, P_cross, position1, position2, P_mutat, n, tasksMas, Generation2);
+
+                    //---------------------------------------
+                    //выбор следущей левой особи для сравнения
+                    if (i != (count_indiv - 1))
+                    {
+                        position1++;
+                        individCross1Main = Generation2[position1];
+                    }
+                }
+                //поиск лучшей особи в популяции
+                int[] bestGenom = Generation2[0];
+
+                Console.WriteLine();
+                Console.WriteLine("    Выбор лучшей особи в поколении");
+                for (int i = 1; i < Generation2.Count; i++)
+                {
+                    int[] Genom2 = Generation2[i];
+                    bestGenom = BestIndivid(bestGenom, Genom2, n, tasksMas);
+                }
+
+                for (int i = 0; i < Generation2.Count; i++)
+                {
+                    if (bestGenom.SequenceEqual(Generation2[i]))
+                    {
+                        bestNum2 = i;
+                    }
+
+                }
+                Console.WriteLine("    " + bestNum2 + "я особь - Лучшая особь в популяции ");
+
+                //подсчет лучшей особи
+                if (bestGenom.SequenceEqual(bestRandPrevious))
+                {
+                    bestRand++;
+                }
+                else
+                {
+                    bestRand = 0;
+                }
+                bestRandPrevious = bestGenom;
+                counterRand++;
+                Console.WriteLine();
+                Console.WriteLine("    -------------------------------------");
+                Console.WriteLine("    Конец " + (counterRand + 1) + "го жизненного цикла");
+                Console.WriteLine("    " + bestNum2 + "я особь - Лучшая особь в популяции ");
+                Console.WriteLine("    -------------------------------------");
+            }
+            //Console.WriteLine();
+            //Console.WriteLine("-----------------------------------------");
+            Console.WriteLine(bestNum2 + "я особь - Лучшая особь");
+            Console.WriteLine("-----------------------------------------");
+            //Console.WriteLine("Финальное поколение (Рандом)");
+            //printListArray(Generation2);
+            //Console.WriteLine("-----------------------------------------");
+
+            //Статистика
+            Console.WriteLine();
+            Console.WriteLine("СТАТИСТИКА");
+            int[] first = Generation1[bestNum];
+            int[] second = Generation2[bestNum2];
+            int TmaxFirst = TmaxFunc(first, n, tasksMas);
+            int TmaxSecond = TmaxFunc(second, n, tasksMas);
+            Console.WriteLine("Критического пути Tmax: " + TmaxFirst);
+            Console.WriteLine("                  Итераций: " + (counterCrit+1));
+            Console.WriteLine("Рандом Tmax: " + TmaxSecond);
+            Console.WriteLine("       Итераций: " + (counterRand + 1));
+            Console.WriteLine();
             Console.WriteLine("-----------------------------------------");
         }
     }
