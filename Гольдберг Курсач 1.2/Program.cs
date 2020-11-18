@@ -184,7 +184,7 @@ namespace Гольдберг_Курсач_1._2
             return Generation1;
         }
 
-        static void Crossover(int[] individCross1, int[] individCross2, int m, int P_cross, int position1, int position2, int P_mutat)
+        static void Crossover(int[] individCross1, int[] individCross2, int m, int P_cross, int position1, int position2, int P_mutat, int n, int []tasksMas)
         {
             var rnd2 = new Random();
             int n2 = rnd2.Next(0, 100);
@@ -222,6 +222,9 @@ namespace Гольдберг_Курсач_1._2
 
                 //мутация
                 Mutation(individCross1, individCross2, m, P_mutat, position1, position2);
+
+                //определение лучшей особи
+                BestIndivid(individCross1, individCross2, n, tasksMas, (position1 + 1), (position2 + 1));
             }
             else
             {
@@ -366,20 +369,26 @@ namespace Гольдберг_Курсач_1._2
             
         }
 
-        static int [] BestIndivid(int[] individCross1, int[] individCross2, int n, int[] tasksMas)
+        static int [] BestIndivid(int[] individCross1, int[] individCross2, int n, int[] tasksMas, int position1, int position2)
         {
-            int Tmax1 = TmaxFunc(individCross1, n, tasksMas);
-            int Tmax2 = TmaxFunc(individCross2, n, tasksMas);
+            int Tmax1 = 0;
+            int Tmax2 = 0;
+            Tmax1 = TmaxFunc(individCross1, n, tasksMas);
+            Tmax2 = TmaxFunc(individCross2, n, tasksMas);
 
             if (Tmax1 <= Tmax2)
-            { 
+            {
+                Console.WriteLine("                     | Лучшая особь " + position1 + "|");
                 return individCross1;
             }
             else
             {
+                Console.WriteLine("                     | Лучшая особь " + position2 + "|");
                 return individCross2;
             }
         }
+        
+
 
         static void Main(string[] args)
         {
@@ -396,9 +405,9 @@ namespace Гольдберг_Курсач_1._2
             int P_cross = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Вероятность мутации (%)");
             int P_mutat = Convert.ToInt32(Console.ReadLine());
-            //Console.WriteLine("Число поколений с неизменным лучшим решением? (%)");
-            //int best = Convert.ToInt32(Console.ReadLine());
-            //Console.WriteLine();
+            Console.WriteLine("Число поколений с неизменно лучшим решением? (%)");
+            int best = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("-----------------------------------------");
 
             //одномерный массив заданий
             int[] tasksMas = new int[m];
@@ -444,15 +453,14 @@ namespace Гольдберг_Курсач_1._2
                     position2 = rnd.Next(0, count_indiv-1);
                 }
                 int[] individCross2 = Generation1[position2];
-                Console.WriteLine(); 
                 Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
 
                 //кроссовер
-                Crossover(individCross1Main, individCross2, m, P_cross, position1, position2,  P_mutat);
+                Crossover(individCross1Main, individCross2, m, P_cross, position1, position2,  P_mutat, n, tasksMas);
 
-                //определение лучшей особи
-                BestIndivid(individCross1Main, individCross2, n, tasksMas);
+               
 
+                //---------------------------------------
                 //выбор следущей левой особи для сравнения
                 if (i != (count_indiv - 1))
                 {
