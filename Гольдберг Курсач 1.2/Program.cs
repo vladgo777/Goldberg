@@ -84,7 +84,7 @@ namespace Гольдберг_Курсач_1._2
             }
             return matrix;
         }
-
+        static int[] line256;
         static int [] GenomCritical(int[,] matrix)
         
         {
@@ -113,7 +113,7 @@ namespace Гольдберг_Курсач_1._2
             }
 
             //перенос значений в геном
-            int[] line256 = new int[matrix.GetLength(1)];
+            line256 = new int[matrix.GetLength(1)];
             int step = 256 / matrix.GetLength(1);
             int point = 0;
             for (int i = 0; i< line256.Length; i++)
@@ -365,6 +365,10 @@ namespace Гольдберг_Курсач_1._2
             print1Mas(tasksMas, m);
 
             //формирование матрицы загрузок для особи
+            //11111
+            //22222
+            // ...
+            //mmmmm
             int[,] matrix = new int[m, n];
             IndvidMatrixGen(matrix, tasksMas, m, n);
 
@@ -378,7 +382,7 @@ namespace Гольдберг_Курсач_1._2
 
             //основная часть Критического пути
             Console.WriteLine();
-            int[] individCross1 = Generation1[0];
+            int[] individCross1Main = Generation1[0];
             int position1 = 0;
             var rnd1 = new Random();
             int position2;
@@ -397,12 +401,55 @@ namespace Гольдберг_Курсач_1._2
                 Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
 
                 //кроссовер
-                Crossover(individCross1, individCross2, m, P_cross, position1, position2,  P_mutat);
+                Crossover(individCross1Main, individCross2, m, P_cross, position1, position2,  P_mutat);
 
+                //определение лучшей особи
+                
+
+                int[] posMas = new int[n];
+                for (int q=0; q < posMas.Length; q++)
+                {
+                    posMas[q] = 0;
+                }
+                int[] line256Local = new int[line256.Length + 1];
+                line256Local[0] = 0;
+                int line256I = 0;
+                for (int qq = 1; qq < line256Local.Length; qq++)
+                {
+                    line256Local[qq] = line256[line256I];
+                    line256I++;
+                }
+                Console.WriteLine();
+                Console.WriteLine("line256Local");
+                print1Mas(line256Local, line256Local.Length);
+                for (int j = 0; j < individCross1Main.Length; j++)
+                {
+                    for (int pos = 0; pos< line256Local.Length - 1; pos++)
+                    {
+                        if (individCross1Main[j] >= line256Local[pos] && individCross1Main[j] <= line256Local[pos + 1])
+                        {
+                            //posMas[pos] = posMas[pos] + individCross1Main[j];
+                            posMas[pos] = posMas[pos] + tasksMas[j];
+                            break;
+                        }
+                    }
+                }
+                int Tmax = posMas.Max();
+                Console.WriteLine();
+                Console.WriteLine("individCross1Main");
+                print1Mas(individCross1Main, individCross1Main.Length);
+
+                Console.WriteLine();
+                Console.WriteLine("posMas");
+                print1Mas(posMas, posMas.Length);
+                Console.WriteLine();
+                Console.WriteLine("Tmax");
+                Console.WriteLine(Tmax);
+                //выбор следущей левой особи для сравнения
                 if (i != (count_indiv - 1))
                 {
                     position1++;
-                    individCross1 = Generation1[position1];
+                    individCross1Main = Generation1[position1];
                 }
             }
         }
