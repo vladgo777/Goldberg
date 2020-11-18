@@ -184,7 +184,7 @@ namespace Гольдберг_Курсач_1._2
             return Generation1;
         }
 
-        static void Crossover(int[] individCross1, int[] individCross2, int m, int P_cross, int position1, int position2, int P_mutat, int n, int []tasksMas)
+        static void Crossover(int[] individCross1, int[] individCross2, int m, int P_cross, int position1, int position2, int P_mutat, int n, int []tasksMas, List<int[]> Generation1)
         {
             var rnd2 = new Random();
             int n2 = rnd2.Next(0, 100);
@@ -224,7 +224,28 @@ namespace Гольдберг_Курсач_1._2
                 Mutation(individCross1, individCross2, m, P_mutat, position1, position2);
 
                 //определение лучшей особи
-                BestIndivid(individCross1, individCross2, n, tasksMas, (position1 + 1), (position2 + 1));
+                Console.WriteLine("                     | Сравнение потомков |");
+                int[] individCrossBestChild = new int[individCross1.Length];
+                individCrossBestChild = BestIndivid(individCross1, individCross2, n, tasksMas, (position1 + 1), (position2 + 1));
+
+                //замена главной особи с лучшим ребенком
+                Console.WriteLine("                     | Сравнение родителя и лучшего потомка |");
+                int[] individCrossBest = new int[individCross1.Length];
+                individCrossBest = BestIndivid(individCross1, individCrossBestChild, n, tasksMas, (position1 + 1), (position2 + 1));
+
+                if (!individCrossBest.SequenceEqual(individCross1))
+                {
+                    Console.WriteLine("                     | Потомок лучше. Замена произведена |");
+                    Generation1[position1] = individCrossBest;
+                }
+                else
+                {
+                    Console.WriteLine("                     | Родитель лучше. Замена не произведена |");
+                }
+
+
+                //Generation1[position2]
+
             }
             else
             {
@@ -378,12 +399,12 @@ namespace Гольдберг_Курсач_1._2
 
             if (Tmax1 <= Tmax2)
             {
-                Console.WriteLine("                     | Лучшая особь " + position1 + "|");
+                Console.WriteLine("                     | 1я особь лучше |");
                 return individCross1;
             }
             else
             {
-                Console.WriteLine("                     | Лучшая особь " + position2 + "|");
+                Console.WriteLine("                     | 2я особь лучше|");
                 return individCross2;
             }
         }
@@ -456,9 +477,9 @@ namespace Гольдберг_Курсач_1._2
                 Console.WriteLine("    | Выбраны " + (position1 + 1) + " и " + (position2 + 1) + " особи |");
 
                 //кроссовер
-                Crossover(individCross1Main, individCross2, m, P_cross, position1, position2,  P_mutat, n, tasksMas);
+                Crossover(individCross1Main, individCross2, m, P_cross, position1, position2,  P_mutat, n, tasksMas, Generation1);
 
-               
+                
 
                 //---------------------------------------
                 //выбор следущей левой особи для сравнения
@@ -468,6 +489,9 @@ namespace Гольдберг_Курсач_1._2
                     individCross1Main = Generation1[position1];
                 }
             }
+            Console.WriteLine();
+            Console.WriteLine("Финальное поколение (Критического пути)");
+            printListArray(Generation1);
         }
     }
 }
